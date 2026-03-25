@@ -4,632 +4,248 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Календар відряджень до Румунії — Аврора мультимаркет</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  
-  :root {
-    --bg-primary: #0b1120;
-    --bg-secondary: #111827;
-    --bg-card: rgba(255,255,255,0.03);
-    --bg-card-hover: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.07);
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --text-muted: #475569;
-    --accent-blue: #3b82f6;
-    --accent-purple: #8b5cf6;
-    --accent-green: #10b981;
-    --accent-amber: #f59e0b;
-    --accent-red: #ef4444;
-    --gradient-main: linear-gradient(135deg, #3b82f6, #8b5cf6);
-    --gradient-header: linear-gradient(135deg, #1e3a5f, #5b21b6);
-    --radius: 12px;
-    --radius-sm: 8px;
-    --shadow-modal: 0 25px 60px rgba(0,0,0,0.6);
-  }
-
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-
-  body {
-    font-family: 'Inter', -apple-system, 'Segoe UI', sans-serif;
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    min-height: 100vh;
-    line-height: 1.5;
-  }
-
-  .app { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
-
-  /* ─── Header ─── */
-  .header {
-    display: flex; align-items: center; justify-content: space-between;
-    margin-bottom: 20px; flex-wrap: wrap; gap: 14px;
-  }
-  .logo { display: flex; align-items: center; gap: 14px; }
-  .logo-icon {
-    width: 48px; height: 48px; background: var(--gradient-main);
-    border-radius: 14px; display: flex; align-items: center; justify-content: center;
-    font-size: 24px; box-shadow: 0 4px 20px rgba(59,130,246,0.35);
-  }
-  .logo-title {
-    font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
-    background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .logo-sub { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-  .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-
-  /* ─── Buttons ─── */
-  .btn {
-    padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
-    font-size: 13px; font-weight: 500; transition: all 0.2s; font-family: inherit;
-    display: inline-flex; align-items: center; gap: 6px;
-  }
-  .btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-  .btn-primary {
-    padding: 9px 20px; border-radius: var(--radius-sm); border: none;
-    background: var(--gradient-main); color: #fff; cursor: pointer;
-    font-size: 13px; font-weight: 600; box-shadow: 0 4px 15px rgba(59,130,246,0.3);
-    font-family: inherit; display: inline-flex; align-items: center; gap: 6px;
-    transition: all 0.2s;
-  }
-  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,130,246,0.4); }
-  .btn-danger {
-    padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid rgba(239,68,68,0.3);
-    background: rgba(239,68,68,0.1); color: #f87171; cursor: pointer;
-    font-size: 13px; font-weight: 500; font-family: inherit;
-  }
-  .btn-excel {
-    padding: 9px 18px; border-radius: var(--radius-sm); border: 1px solid rgba(16,185,129,0.3);
-    background: rgba(16,185,129,0.1); color: #34d399; cursor: pointer;
-    font-size: 13px; font-weight: 600; font-family: inherit;
-    display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s;
-  }
-  .btn-excel:hover { background: rgba(16,185,129,0.2); }
-  .nav-btn {
-    width: 34px; height: 34px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    background: var(--bg-card); color: var(--text-secondary); cursor: pointer;
-    font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-  }
-  .nav-btn:hover { background: var(--bg-card-hover); color: var(--text-primary); }
-
-  /* ─── Year Nav ─── */
-  .year-nav { display: flex; align-items: center; gap: 8px; }
-  .year-label { font-size: 18px; font-weight: 700; color: var(--text-primary); min-width: 54px; text-align: center; }
-
-  /* ─── Stats ─── */
-  .stats { display: flex; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
-  .stat-card {
-    background: var(--bg-card); border-radius: 14px; border: 1px solid var(--border);
-    padding: 14px 20px; flex: 1; min-width: 130px;
-  }
-  .stat-value {
-    font-size: 28px; font-weight: 800;
-    background: var(--gradient-main); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  }
-  .stat-label { font-size: 10px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 1px; }
-
-  /* ─── Filter ─── */
-  .filter-bar { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; align-items: center; }
-  .search-input {
-    padding: 9px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    background: var(--bg-card); color: var(--text-primary); font-size: 13px;
-    width: 260px; outline: none; font-family: inherit; transition: border-color 0.2s;
-  }
-  .search-input:focus { border-color: var(--accent-blue); }
-  .search-input::placeholder { color: var(--text-muted); }
-
-  /* ─── Calendar Grid ─── */
-  .calendar-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 14px; margin-bottom: 24px;
-  }
-
-  /* ─── Month Card ─── */
-  .month-card {
-    background: var(--bg-card); border-radius: 16px; border: 1px solid var(--border);
-    padding: 16px 18px; transition: all 0.3s;
-  }
-  .month-card:hover { border-color: rgba(255,255,255,0.12); }
-  .month-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-  .month-name { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; }
-  .month-purpose { font-size: 11px; color: var(--accent-purple); margin-top: 3px; font-weight: 500; }
-  .month-badge {
-    font-size: 11px; background: rgba(139,92,246,0.15); color: #a78bfa;
-    padding: 2px 9px; border-radius: 20px; font-weight: 600;
-  }
-  .week-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 2px; }
-  .weekday { text-align: center; font-size: 9px; color: var(--text-muted); font-weight: 600; padding: 3px 0; text-transform: uppercase; }
-  .day-cell {
-    position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
-    border-radius: 7px; font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s;
-    color: var(--text-secondary);
-  }
-  .day-cell:hover { background: var(--bg-card-hover); }
-  .day-cell.empty { cursor: default; }
-  .day-cell.today { background: rgba(59,130,246,0.15); color: #60a5fa; font-weight: 700; box-shadow: inset 0 0 0 1.5px var(--accent-blue); }
-  .day-cell.weekend { color: var(--text-muted); }
-  .day-cell.has-trip { background: rgba(139,92,246,0.1); }
-  .trip-dots { position: absolute; bottom: 2px; display: flex; gap: 1.5px; justify-content: center; }
-  .trip-dot { width: 3.5px; height: 3.5px; border-radius: 50%; }
-  .month-trips { margin-top: 8px; border-top: 1px solid var(--border); padding-top: 8px; }
-  .month-trip-row { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-secondary); margin-bottom: 3px; }
-  .month-trip-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .month-trip-name { font-weight: 600; color: #cbd5e1; }
-  .month-trip-dates { color: var(--text-muted); }
-  .month-trip-status { margin-left: auto; font-size: 10px; font-weight: 600; }
-
-  /* ─── Modal / Overlay ─── */
-  .overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
-    display: flex; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
-  }
-  .overlay.hidden { display: none; }
-  .modal {
-    background: linear-gradient(135deg, #1e293b, var(--bg-primary)); border-radius: 20px;
-    border: 1px solid rgba(255,255,255,0.1); padding: 24px; width: 100%; max-width: 500px;
-    max-height: 85vh; overflow-y: auto; box-shadow: var(--shadow-modal);
-  }
-  .modal-title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 20px; }
-  .form-group { margin-bottom: 16px; }
-  .form-label {
-    display: block; font-size: 11px; font-weight: 600; color: var(--text-muted);
-    margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
-  }
-  .form-input, .form-select {
-    width: 100%; padding: 10px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border);
-    background: var(--bg-card); color: var(--text-primary); font-size: 14px; outline: none;
-    font-family: inherit; transition: border-color 0.2s;
-  }
-  .form-input:focus, .form-select:focus { border-color: var(--accent-blue); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .form-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-  .city-box {
-    background: rgba(139,92,246,0.08); border-radius: 10px; padding: 10px 14px;
-    margin-bottom: 16px; border: 1px solid rgba(139,92,246,0.15);
-  }
-  .city-box-label { font-size: 10px; color: var(--accent-purple); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-  .city-box-value { font-size: 14px; color: var(--text-primary); font-weight: 600; margin-top: 2px; }
-  .city-box-purpose { font-size: 12px; color: #a78bfa; margin-top: 4px; }
-
-  /* ─── Day Popup ─── */
-  .day-popup {
-    background: linear-gradient(135deg, #1e293b, var(--bg-primary)); border-radius: 16px;
-    border: 1px solid rgba(255,255,255,0.1); padding: 20px; width: 100%; max-width: 420px;
-    max-height: 80vh; overflow-y: auto; box-shadow: var(--shadow-modal);
-  }
-  .day-popup-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .day-popup-date { font-size: 17px; font-weight: 700; color: var(--text-primary); }
-  .day-popup-purpose { font-size: 12px; color: var(--accent-purple); margin-bottom: 14px; font-weight: 500; }
-  .trip-card {
-    background: rgba(255,255,255,0.04); border-radius: 12px; padding: 12px; margin-bottom: 8px;
-    border-left: 3px solid; cursor: pointer; transition: all 0.2s;
-  }
-  .trip-card:hover { background: rgba(255,255,255,0.07); }
-  .trip-card-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
-  .trip-card-meta { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-  .no-trips { color: var(--text-muted); font-size: 13px; text-align: center; padding: 16px 0; }
-
-  /* ─── Config Banner ─── */
-  .config-banner {
-    background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2);
-    border-radius: var(--radius); padding: 14px 18px; margin-bottom: 18px;
-    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
-  }
-  .config-banner.hidden { display: none; }
-  .config-banner-text { flex: 1; font-size: 13px; color: #fbbf24; min-width: 200px; }
-  .config-banner-text strong { color: #fde68a; }
-  .config-input {
-    flex: 2; min-width: 250px; padding: 8px 12px; border-radius: var(--radius-sm);
-    border: 1px solid rgba(245,158,11,0.3); background: rgba(0,0,0,0.3);
-    color: var(--text-primary); font-size: 12px; font-family: monospace; outline: none;
-  }
-
-  /* ─── Scrollbar ─── */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
-
-  /* ─── Responsive ─── */
-  @media (max-width: 640px) {
-    .app { padding: 12px; }
-    .calendar-grid { grid-template-columns: 1fr; }
-    .header { gap: 10px; }
-    .stats { gap: 8px; }
-    .stat-card { min-width: 100px; padding: 10px 14px; }
-  }
+  :root{--bg:#0b1120;--bg2:rgba(255,255,255,0.025);--bd:rgba(255,255,255,0.06);--t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--blue:#3b82f6;--purple:#8b5cf6;--green:#10b981;--amber:#f59e0b;--red:#ef4444;--grad:linear-gradient(135deg,#3b82f6,#8b5cf6)}
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.5}
+  .app{max-width:1400px;margin:0 auto;padding:20px 24px}
+  .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:14px}
+  .logo{display:flex;align-items:center;gap:14px}
+  .logo-i{width:50px;height:50px;background:var(--grad);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 24px rgba(59,130,246,0.35)}
+  .logo-t{font-size:22px;font-weight:800;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .logo-s{font-size:12px;color:var(--t3);margin-top:1px}
+  .ctrls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{padding:8px 16px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.04);color:var(--t2);cursor:pointer;font-size:12px;font-weight:500;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap}
+  .btn:hover{background:rgba(255,255,255,0.08);color:var(--t1)}
+  .btn-p{padding:8px 18px;border-radius:8px;border:none;background:var(--grad);color:#fff;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:5px;box-shadow:0 4px 15px rgba(59,130,246,0.3);transition:all .2s;white-space:nowrap}
+  .btn-p:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(59,130,246,0.4)}
+  .btn-g{padding:8px 16px;border-radius:8px;border:1px solid rgba(16,185,129,0.3);background:rgba(16,185,129,0.08);color:#34d399;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:all .2s;white-space:nowrap;text-decoration:none}
+  .btn-g:hover{background:rgba(16,185,129,0.15)}
+  .nav{display:flex;align-items:center;gap:6px}
+  .nav-b{width:32px;height:32px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.04);color:var(--t2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+  .yr{font-size:17px;font-weight:700;color:var(--t1);min-width:50px;text-align:center}
+  .stats{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .stat{background:var(--bg2);border-radius:12px;border:1px solid var(--bd);padding:12px 18px;flex:1;min-width:120px}
+  .stat-v{font-size:26px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+  .stat-l{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
+  .info{background:rgba(59,130,246,0.06);border:1px solid rgba(59,130,246,0.12);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#93c5fd;line-height:1.5;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .info .ts{margin-left:auto;font-size:10px;color:var(--t3)}
+  .src-bar{background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.12);border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;color:#c4b5fd;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .src-bar.hidden{display:none}
+  .src-input{flex:1;min-width:200px;padding:7px 10px;border-radius:8px;border:1px solid rgba(139,92,246,0.2);background:rgba(0,0,0,0.3);color:var(--t1);font-size:11px;font-family:monospace;outline:none}
+  .search{padding:8px 14px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.04);color:var(--t1);font-size:12px;width:260px;outline:none;font-family:inherit;margin-bottom:14px}
+  .search::placeholder{color:var(--t3)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:12px}
+  .card{background:var(--bg2);border-radius:14px;border:1px solid var(--bd);padding:14px 16px}
+  .m-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+  .m-name{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
+  .m-purp{font-size:10px;color:#a78bfa;margin-top:3px;font-weight:500;line-height:1.4}
+  .m-badge{font-size:10px;background:rgba(139,92,246,0.15);color:#a78bfa;padding:2px 8px;border-radius:16px;font-weight:600}
+  .wr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
+  .wd{text-align:center;font-size:8px;color:var(--t3);font-weight:600;padding:2px 0;text-transform:uppercase}
+  .dc{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--t2)}
+  .dc:hover{background:rgba(255,255,255,0.06)}
+  .dc.empty{cursor:default}.dc.empty:hover{background:none}
+  .dc.today{background:rgba(59,130,246,0.15);color:#60a5fa;font-weight:700;box-shadow:inset 0 0 0 1.5px var(--blue)}
+  .dc.we{color:#2d3748}.dc.trip{background:rgba(139,92,246,0.1)}
+  .dots{position:absolute;bottom:2px;display:flex;gap:1.5px}
+  .dot{width:3px;height:3px;border-radius:50%}
+  .m-trips{margin-top:6px;border-top:1px solid var(--bd);padding-top:6px}
+  .m-row{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2);margin-bottom:3px;flex-wrap:wrap}
+  .m-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+  .overlay.hidden{display:none}
+  .popup{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;border:1px solid rgba(255,255,255,0.1);padding:18px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.5)}
+  .t-card{background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;margin-bottom:6px;border-left:3px solid}
+  .no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;text-align:center}
+  .no-data-icon{font-size:64px;margin-bottom:16px}
+  .no-data-title{font-size:20px;font-weight:700;color:var(--t1);margin-bottom:8px}
+  .no-data-text{font-size:14px;color:var(--t3);max-width:400px;line-height:1.6;margin-bottom:20px}
+  #fileInput{display:none}
+  @media(max-width:640px){.app{padding:12px}.grid{grid-template-columns:1fr}.search{width:100%}}
 </style>
 </head>
 <body>
-
-<div class="app" id="app">
-  <!-- Header -->
-  <div class="header">
+<div class="app">
+  <div class="hdr">
     <div class="logo">
-      <div class="logo-icon">🇷🇴</div>
-      <div>
-        <div class="logo-title">Календар відряджень до Румунії</div>
-        <div class="logo-sub">Аврора мультимаркет · Бухарест · <span id="headerYear">2026</span></div>
+      <div class="logo-i">🇷🇴</div>
+      <div><div class="logo-t">Календар відряджень до Румунії</div><div class="logo-s">Аврора мультимаркет · Бухарест · <span id="hdrYear">2026</span></div></div>
+    </div>
+    <div class="ctrls">
+      <button class="btn-p" onclick="document.getElementById('fileInput').click()">📊 Оновити дані</button>
+      <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this)">
+      <a id="srcLink" href="#" target="_blank" class="btn-g">📂 Відкрити Excel</a>
+      <button class="btn" onclick="toggleSrcBar()">⚙️ Джерело</button>
+      <div class="nav">
+        <button class="nav-b" onclick="changeYear(-1)">‹</button>
+        <span class="yr" id="yrLbl">2026</span>
+        <button class="nav-b" onclick="changeYear(1)">›</button>
       </div>
     </div>
-    <div class="controls">
-      <a id="excelLink" href="#" target="_blank" class="btn-excel" title="Відкрити Excel для редагування">
-        📊 Відкрити Excel
-      </a>
-      <div class="year-nav">
-        <button class="nav-btn" onclick="changeYear(-1)">‹</button>
-        <span class="year-label" id="yearLabel">2026</span>
-        <button class="nav-btn" onclick="changeYear(1)">›</button>
-      </div>
-      <button class="btn-primary" onclick="openForm()">✈️ Нове відрядження</button>
-    </div>
   </div>
-
-  <!-- Config Banner -->
-  <div class="config-banner" id="configBanner">
-    <div class="config-banner-text">
-      <strong>⚙️ Налаштування:</strong> Вставте посилання на Excel-файл на SharePoint, щоб кнопка «Відкрити Excel» працювала
-    </div>
-    <input class="config-input" id="excelUrlInput" placeholder="https://yourtenant.sharepoint.com/.../calendar_romania_2026.xlsx" oninput="saveExcelUrl(this.value)">
-    <button class="btn" onclick="hideConfig()" style="padding:6px 12px;font-size:12px;">✕</button>
+  <div class="src-bar hidden" id="srcBar">
+    <span>📎 Посилання на Excel у SharePoint:</span>
+    <input class="src-input" id="srcInput" placeholder="https://yourtenant.sharepoint.com/.../calendar_romania_2026.xlsx" oninput="saveSrcUrl(this.value)">
+    <button class="btn" onclick="toggleSrcBar()" style="padding:5px 10px;font-size:11px">✕</button>
   </div>
-
-  <!-- Stats -->
+  <div class="info" id="infoBar">
+    <span id="infoText">📋 Натисніть <strong>«Оновити дані»</strong> і оберіть файл calendar_romania_2026.xlsx</span>
+    <span class="ts" id="infoTs"></span>
+  </div>
   <div class="stats">
-    <div class="stat-card"><div class="stat-value" id="statTrips">0</div><div class="stat-label">Відряджень</div></div>
-    <div class="stat-card"><div class="stat-value" id="statEmps">0</div><div class="stat-label">Співробітників</div></div>
-    <div class="stat-card"><div class="stat-value" id="statDays">0</div><div class="stat-label">Днів у дорозі</div></div>
+    <div class="stat"><div class="stat-v" id="sTrips">—</div><div class="stat-l">Відряджень</div></div>
+    <div class="stat"><div class="stat-v" id="sEmps">—</div><div class="stat-l">Співробітників</div></div>
+    <div class="stat"><div class="stat-v" id="sDays">—</div><div class="stat-l">Днів у дорозі</div></div>
   </div>
-
-  <!-- Filter -->
-  <div class="filter-bar">
-    <input class="search-input" id="searchInput" placeholder="🔍 Пошук по імені співробітника..." oninput="renderCalendar()">
-  </div>
-
-  <!-- Calendar Grid -->
-  <div class="calendar-grid" id="calendarGrid"></div>
+  <input class="search" id="searchInput" placeholder="🔍 Пошук по імені..." oninput="render()">
+  <div id="content"></div>
 </div>
-
-<!-- Day Detail Overlay -->
-<div class="overlay hidden" id="dayOverlay" onclick="closeDayPopup()">
-  <div class="day-popup" onclick="event.stopPropagation()" id="dayPopup"></div>
+<div class="overlay hidden" id="dayOv" onclick="closeDay()">
+  <div class="popup" onclick="event.stopPropagation()" id="dayPop"></div>
 </div>
-
-<!-- Form Overlay -->
-<div class="overlay hidden" id="formOverlay" onclick="closeForm()">
-  <div class="modal" onclick="event.stopPropagation()" id="formModal"></div>
-</div>
-
 <script>
-// ═══════════════════════════════════════════════
-// DATA
-// ═══════════════════════════════════════════════
-const MONTHS_UA = ["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"];
-const WEEKDAYS = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
-const STATUSES = ["Заплановано","Погоджено","В дорозі","Завершено","Скасовано"];
-const STATUS_CLR = {Заплановано:"#f59e0b",Погоджено:"#3b82f6","В дорозі":"#10b981",Завершено:"#6b7280",Скасовано:"#ef4444"};
-const COLORS = ["#3B82F6","#10B981","#F59E0B","#EF4444","#8B5CF6","#EC4899","#06B6D4","#F97316","#14B8A6","#6366F1","#D946EF","#0EA5E9","#84CC16","#E11D48","#7C3AED","#059669","#DC2626","#2563EB","#CA8A04","#9333EA"];
+const M_UA=["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"];
+const WD=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
+const SC={Заплановано:"#f59e0b",Погоджено:"#3b82f6","В дорозі":"#10b981",Завершено:"#6b7280",Скасовано:"#ef4444"};
+const PAL=["#3B82F6","#10B981","#F59E0B","#EF4444","#8B5CF6","#EC4899","#06B6D4","#F97316","#14B8A6","#6366F1","#D946EF","#0EA5E9","#84CC16","#E11D48","#7C3AED","#059669"];
+let year=2026,employees=[],purposes=[],trips=[],dataLoaded=false,lastUpdate='';
 
-let currentYear = 2026;
-let editingId = null;
-
-// ─── Default data (matches Excel file) ───
-const DEFAULT_EMPLOYEES = [
-  "Доценко Олександр","Безрук Максим","Хмельницька Тетяна","Скрипак Ангеліна",
-  "Семергей Ірина","Деркач Станіслав","Скотаренко Ігор","Мовчан Аліна",
-  "Пишна Юлія","Красько Павло","Нелень Людмила","Чижма Марія",
-  "Дряпак Марія","Поступний Вадим","Погрібняк Вікторія","Ромашко Сергій"
-];
-
-const DEFAULT_PURPOSES = [
-  "Оптимізація асортиментної структури та стабільності наявності",
-  "Впорядкування взаємодії з партнерами",
-  "Контроль сезонних ризиків попиту та запасів",
-  "Формалізація фінансової моделі категорій",
-  "Синхронізація категорійного менеджменту та маркетингу",
-  "Інтеграція продажів, запасів і фінансових KPI",
-  "Оцінка стабільності процесу планування",
-  "Підвищення ефективності ціноутворення",
-  "Зниження ризику неліквідних запасів",
-  "Оцінка ефективності нового формату",
-  "Мінімізація ризиків пікового сезону",
-  "Стратегічне планування наступного періоду"
-];
-
-const DEFAULT_TRIPS = [
-  {id:1,employee:"Доценко Олександр",start:"2026-01-12",end:"2026-01-16",status:"Заплановано"},
-  {id:2,employee:"Безрук Максим",start:"2026-01-12",end:"2026-01-16",status:"Заплановано"},
-  {id:3,employee:"Хмельницька Тетяна",start:"2026-02-09",end:"2026-02-13",status:"Заплановано"},
-  {id:4,employee:"Скрипак Ангеліна",start:"2026-02-09",end:"2026-02-13",status:"Заплановано"},
-  {id:5,employee:"Семергей Ірина",start:"2026-02-09",end:"2026-02-13",status:"Заплановано"},
-  {id:6,employee:"Деркач Станіслав",start:"2026-03-16",end:"2026-03-20",status:"Заплановано"},
-  {id:7,employee:"Скотаренко Ігор",start:"2026-04-13",end:"2026-04-17",status:"Заплановано"},
-  {id:8,employee:"Мовчан Аліна",start:"2026-04-13",end:"2026-04-17",status:"Заплановано"},
-  {id:9,employee:"Пишна Юлія",start:"2026-04-13",end:"2026-04-17",status:"Заплановано"},
-  {id:10,employee:"Красько Павло",start:"2026-06-18",end:"2026-06-24",status:"Заплановано"},
-  {id:11,employee:"Нелень Людмила",start:"2026-05-28",end:"2026-05-30",status:"Заплановано"},
-  {id:12,employee:"Чижма Марія",start:"2026-05-22",end:"2026-05-27",status:"Заплановано"},
-  {id:13,employee:"Дряпак Марія",start:"2026-07-07",end:"2026-07-14",status:"Заплановано"},
-  {id:14,employee:"Поступний Вадим",start:"2026-05-05",end:"2026-05-08",status:"Заплановано"},
-  {id:15,employee:"Погрібняк Вікторія",start:"2026-11-11",end:"2026-11-15",status:"Заплановано"},
-  {id:16,employee:"Ромашко Сергій",start:"2026-12-04",end:"2026-12-11",status:"Заплановано"},
-];
-
-// Load from storage or use defaults
-function loadData() {
-  try {
-    const saved = JSON.parse(localStorage.getItem('aurora_trips') || 'null');
-    return saved || [...DEFAULT_TRIPS];
-  } catch { return [...DEFAULT_TRIPS]; }
-}
-function saveData(trips) {
-  localStorage.setItem('aurora_trips', JSON.stringify(trips));
+function handleFile(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      parseWorkbook(wb); dataLoaded=true;
+      lastUpdate=new Date().toLocaleString('uk-UA');
+      saveCache(); render(); updateInfo();
+    }catch(err){alert('Помилка читання файлу: '+err.message);}
+  };
+  reader.readAsArrayBuffer(file); input.value='';
 }
 
-let trips = loadData();
-let nextId = Math.max(...trips.map(t=>t.id), 0) + 1;
-
-// ═══════════════════════════════════════════════
-// EXCEL URL CONFIG
-// ═══════════════════════════════════════════════
-function saveExcelUrl(url) {
-  localStorage.setItem('aurora_excel_url', url);
-  document.getElementById('excelLink').href = url || '#';
-}
-function hideConfig() {
-  document.getElementById('configBanner').classList.add('hidden');
-  localStorage.setItem('aurora_config_hidden', '1');
-}
-function initConfig() {
-  const url = localStorage.getItem('aurora_excel_url') || '';
-  const hidden = localStorage.getItem('aurora_config_hidden') === '1';
-  document.getElementById('excelUrlInput').value = url;
-  document.getElementById('excelLink').href = url || '#';
-  if (hidden && url) document.getElementById('configBanner').classList.add('hidden');
-}
-
-// ═══════════════════════════════════════════════
-// CALENDAR RENDERING
-// ═══════════════════════════════════════════════
-function getDaysInMonth(y,m) { return new Date(y,m+1,0).getDate(); }
-function getFirstDay(y,m) { const d=new Date(y,m,1).getDay(); return d===0?6:d-1; }
-function fmt(ds) { const d=new Date(ds); return `${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`; }
-function getMonthFromDate(ds) { return new Date(ds).getMonth(); }
-function empColor(name) { const i=DEFAULT_EMPLOYEES.indexOf(name); return COLORS[(i>=0?i:0)%COLORS.length]; }
-
-function getFilteredTrips() {
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  return trips.filter(t => !q || t.employee.toLowerCase().includes(q));
-}
-
-function getTripsForDay(y, m, d, filtered) {
-  const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  return filtered.filter(t => t.start <= ds && t.end >= ds);
-}
-
-function getTripsForMonth(m, filtered) {
-  return filtered.filter(t => {
-    const sm = new Date(t.start).getMonth();
-    const em = new Date(t.end).getMonth();
-    return sm === m || em === m;
-  });
-}
-
-function updateStats() {
-  const yt = trips.filter(t => t.start.startsWith(String(currentYear)));
-  const emps = new Set(yt.map(t => t.employee)).size;
-  const days = yt.reduce((s,t) => {
-    return s + Math.ceil((new Date(t.end) - new Date(t.start)) / 864e5) + 1;
-  }, 0);
-  document.getElementById('statTrips').textContent = yt.length;
-  document.getElementById('statEmps').textContent = emps;
-  document.getElementById('statDays').textContent = days;
-}
-
-function renderCalendar() {
-  const grid = document.getElementById('calendarGrid');
-  const filtered = getFilteredTrips();
-  const today = new Date();
-  let html = '';
-
-  for (let m = 0; m < 12; m++) {
-    const days = getDaysInMonth(currentYear, m);
-    const first = getFirstDay(currentYear, m);
-    const isNow = today.getFullYear() === currentYear && today.getMonth() === m;
-    const monthTrips = getTripsForMonth(m, filtered);
-    const purpose = DEFAULT_PURPOSES[m] || '';
-
-    html += `<div class="month-card">`;
-    html += `<div class="month-header"><div><div class="month-name">${MONTHS_UA[m]}</div>`;
-    if (purpose) html += `<div class="month-purpose">🎯 ${purpose}</div>`;
-    html += `</div>`;
-    if (monthTrips.length) html += `<span class="month-badge">${monthTrips.length}</span>`;
-    html += `</div>`;
-
-    // Weekday headers
-    html += `<div class="week-row">`;
-    WEEKDAYS.forEach(w => { html += `<div class="weekday">${w}</div>`; });
-    html += `</div>`;
-
-    // Days
-    let day = 1, started = false;
-    while (day <= days) {
-      html += `<div class="week-row">`;
-      for (let i = 0; i < 7; i++) {
-        if (!started && i < first) {
-          html += `<div class="day-cell empty"></div>`;
-        } else if (day <= days) {
-          const dt = getTripsForDay(currentYear, m, day, filtered);
-          const isToday = isNow && day === today.getDate();
-          const isWe = i >= 5;
-          let cls = 'day-cell';
-          if (isToday) cls += ' today';
-          if (isWe) cls += ' weekend';
-          if (dt.length) cls += ' has-trip';
-
-          html += `<div class="${cls}" onclick="openDay(${currentYear},${m},${day})">${day}`;
-          if (dt.length) {
-            html += `<div class="trip-dots">`;
-            dt.slice(0,4).forEach(t => { html += `<div class="trip-dot" style="background:${empColor(t.employee)}"></div>`; });
-            html += `</div>`;
-          }
-          html += `</div>`;
-          day++; started = true;
-        } else {
-          html += `<div class="day-cell empty"></div>`;
-          day++;
-        }
-      }
-      html += `</div>`;
-    }
-
-    // Month trip list
-    if (monthTrips.length) {
-      html += `<div class="month-trips">`;
-      monthTrips.forEach(t => {
-        html += `<div class="month-trip-row">`;
-        html += `<div class="month-trip-dot" style="background:${empColor(t.employee)}"></div>`;
-        html += `<span class="month-trip-name">${t.employee}</span>`;
-        html += `<span class="month-trip-dates">${fmt(t.start)}–${fmt(t.end)}</span>`;
-        html += `<span class="month-trip-status" style="color:${STATUS_CLR[t.status]||'#64748b'}">${t.status}</span>`;
-        html += `</div>`;
-      });
-      html += `</div>`;
-    }
-
-    html += `</div>`;
+function parseWorkbook(wb){
+  const wsE=wb.Sheets['Співробітники'];
+  if(wsE){const raw=XLSX.utils.sheet_to_json(wsE,{range:3});
+    employees=raw.filter(r=>r['ПІБ співробітника']).map(r=>({
+      name:String(r['ПІБ співробітника']||'').trim(),
+      email:String(r['Електронна пошта']||'').trim(),
+      role:String(r['Посада']||'').trim()
+    }));
   }
-
-  grid.innerHTML = html;
-  updateStats();
-  document.getElementById('yearLabel').textContent = currentYear;
-  document.getElementById('headerYear').textContent = currentYear;
-}
-
-function changeYear(delta) { currentYear += delta; renderCalendar(); }
-
-// ═══════════════════════════════════════════════
-// DAY POPUP
-// ═══════════════════════════════════════════════
-function openDay(y, m, d) {
-  const filtered = getFilteredTrips();
-  const dt = getTripsForDay(y, m, d, filtered);
-  const purpose = DEFAULT_PURPOSES[m] || 'Не визначено';
-  const popup = document.getElementById('dayPopup');
-
-  let html = `<div class="day-popup-header">`;
-  html += `<div class="day-popup-date">📅 ${d} ${MONTHS_UA[m]} ${y}</div>`;
-  html += `<button class="btn" onclick="closeDayPopup()" style="padding:4px 10px">✕</button></div>`;
-  html += `<div class="day-popup-purpose">🎯 ${purpose}</div>`;
-
-  if (!dt.length) {
-    html += `<div class="no-trips">Немає відряджень на цю дату</div>`;
-  } else {
-    dt.forEach(t => {
-      html += `<div class="trip-card" style="border-left-color:${empColor(t.employee)}" onclick="openForm(${t.id})">`;
-      html += `<div class="trip-card-name">${t.employee}</div>`;
-      html += `<div class="trip-card-meta">🇷🇴 Бухарест · ${fmt(t.start)}–${fmt(t.end)} <span style="margin-left:8px;color:${STATUS_CLR[t.status]};font-weight:600">${t.status}</span></div>`;
-      html += `</div>`;
+  const wsP=wb.Sheets['Мета по місяцях'];
+  if(wsP){const raw=XLSX.utils.sheet_to_json(wsP,{range:3});
+    purposes=[];
+    raw.forEach(r=>{const m=String(r['Місяць']||'').trim(),i=M_UA.indexOf(m);
+      if(i>=0)purposes[i]=String(r['Мета відрядження']||'').trim();
     });
   }
-
-  const ds = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-  html += `<button class="btn-primary" style="width:100%;justify-content:center;margin-top:10px" onclick="closeDayPopup();openForm(null,'${ds}')">＋ Додати відрядження</button>`;
-
-  popup.innerHTML = html;
-  document.getElementById('dayOverlay').classList.remove('hidden');
-}
-
-function closeDayPopup() { document.getElementById('dayOverlay').classList.add('hidden'); }
-
-// ═══════════════════════════════════════════════
-// FORM
-// ═══════════════════════════════════════════════
-function openForm(id, initDate) {
-  editingId = id || null;
-  const trip = id ? trips.find(t => t.id === id) : null;
-  const modal = document.getElementById('formModal');
-
-  const defStart = initDate || '';
-  const defEnd = initDate || '';
-  const m = trip ? new Date(trip.start).getMonth() : (initDate ? new Date(initDate).getMonth() : null);
-  const purpose = m !== null ? (DEFAULT_PURPOSES[m] || '—') : '';
-
-  let empOpts = DEFAULT_EMPLOYEES.map(e => `<option value="${e}" ${trip && trip.employee===e ? 'selected':''}>${e}</option>`).join('');
-  let statusOpts = STATUSES.map(s => `<option value="${s}" ${trip && trip.status===s ? 'selected':''}>${s}</option>`).join('');
-
-  let html = `<div class="modal-title">${trip ? '✏️ Редагувати' : '✈️ Нове'} відрядження</div>`;
-
-  html += `<div class="form-group"><label class="form-label">Співробітник</label>`;
-  html += `<select class="form-select" id="fEmployee">${empOpts}</select></div>`;
-
-  html += `<div class="city-box"><div class="city-box-label">Місто</div>`;
-  html += `<div class="city-box-value">🇷🇴 Бухарест, Румунія</div>`;
-  html += `<div class="city-box-purpose" id="fPurposeDisplay">${purpose ? '🎯 '+purpose : ''}</div></div>`;
-
-  html += `<div class="form-row">`;
-  html += `<div class="form-group"><label class="form-label">Дата початку</label>`;
-  html += `<input type="date" class="form-input" id="fStart" value="${trip?trip.start:defStart}" onchange="updatePurposeDisplay()"></div>`;
-  html += `<div class="form-group"><label class="form-label">Дата кінця</label>`;
-  html += `<input type="date" class="form-input" id="fEnd" value="${trip?trip.end:defEnd}"></div></div>`;
-
-  html += `<div class="form-group"><label class="form-label">Статус</label>`;
-  html += `<select class="form-select" id="fStatus">${statusOpts}</select></div>`;
-
-  html += `<div class="form-actions">`;
-  if (trip) html += `<button class="btn-danger" onclick="deleteTrip(${trip.id})" style="margin-right:auto">🗑 Видалити</button>`;
-  html += `<button class="btn" onclick="closeForm()">Скасувати</button>`;
-  html += `<button class="btn-primary" onclick="saveTrip()">💾 Зберегти</button>`;
-  html += `</div>`;
-
-  modal.innerHTML = html;
-  document.getElementById('formOverlay').classList.remove('hidden');
-}
-
-function updatePurposeDisplay() {
-  const start = document.getElementById('fStart').value;
-  if (start) {
-    const m = new Date(start).getMonth();
-    const p = DEFAULT_PURPOSES[m] || '—';
-    document.getElementById('fPurposeDisplay').textContent = '🎯 ' + p;
+  const wsT=wb.Sheets['Відрядження'];
+  if(wsT){const raw=XLSX.utils.sheet_to_json(wsT,{range:3,cellDates:true});
+    trips=[];
+    raw.forEach((r,i)=>{
+      const name=String(r['ПІБ співробітника']||'').trim();if(!name)return;
+      const start=pd(r['Дата початку']),end=pd(r['Дата завершення']);if(!start||!end)return;
+      trips.push({id:i+1,employee:name,month:String(r['Місяць']||'').trim(),
+        start,end,purpose:String(r['Мета (авто)']||'').trim(),
+        status:String(r['Статус']||'Заплановано').trim()});
+    });
   }
 }
 
-function closeForm() { document.getElementById('formOverlay').classList.add('hidden'); editingId = null; }
-
-function saveTrip() {
-  const emp = document.getElementById('fEmployee').value;
-  const start = document.getElementById('fStart').value;
-  const end = document.getElementById('fEnd').value;
-  const status = document.getElementById('fStatus').value;
-  if (!start || !end) return;
-
-  if (editingId) {
-    const t = trips.find(t => t.id === editingId);
-    if (t) { t.employee = emp; t.start = start; t.end = end; t.status = status; }
-  } else {
-    trips.push({ id: nextId++, employee: emp, start, end, status });
-  }
-
-  saveData(trips);
-  closeForm();
-  closeDayPopup();
-  renderCalendar();
+function pd(v){
+  if(!v)return null;
+  if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return`${y}-${m}-${d}`;}
+  const s=String(v).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return null;
 }
 
-function deleteTrip(id) {
-  trips = trips.filter(t => t.id !== id);
-  saveData(trips);
-  closeForm();
-  closeDayPopup();
-  renderCalendar();
+function saveCache(){try{localStorage.setItem('aurora_cal',JSON.stringify({employees,purposes,trips,lastUpdate}));}catch(e){}}
+function loadCache(){try{const d=JSON.parse(localStorage.getItem('aurora_cal'));
+  if(d&&d.trips&&d.trips.length){employees=d.employees||[];purposes=d.purposes||[];trips=d.trips||[];lastUpdate=d.lastUpdate||'';dataLoaded=true;}}catch(e){}}
+
+function saveSrcUrl(url){localStorage.setItem('aurora_src_url',url);const el=document.getElementById('srcLink');el.href=url||'#';el.style.display=url?'':'none';}
+function toggleSrcBar(){document.getElementById('srcBar').classList.toggle('hidden');}
+function initSrc(){const url=localStorage.getItem('aurora_src_url')||'';document.getElementById('srcInput').value=url;const el=document.getElementById('srcLink');el.href=url||'#';el.style.display=url?'':'none';}
+
+function ec(name){const i=employees.findIndex(e=>e.name===name);return PAL[(i>=0?i:0)%PAL.length];}
+function er(name){const e=employees.find(e=>e.name===name);return e?.role||'';}
+function fm(ds){const d=new Date(ds);return`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;}
+function dim(y,m){return new Date(y,m+1,0).getDate();}
+function fwd(y,m){const d=new Date(y,m,1).getDay();return d===0?6:d-1;}
+
+function getF(){const q=(document.getElementById('searchInput').value||'').toLowerCase();
+  if(!q)return trips;return trips.filter(t=>t.employee.toLowerCase().includes(q)||er(t.employee).toLowerCase().includes(q));}
+function tfd(y,m,d,l){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return l.filter(t=>t.start<=ds&&t.end>=ds);}
+function tfm(m,l){return l.filter(t=>{const sm=new Date(t.start).getMonth(),em=new Date(t.end).getMonth();return sm===m||em===m;});}
+
+function updateInfo(){const el=document.getElementById('infoText'),ts=document.getElementById('infoTs');
+  if(dataLoaded){el.innerHTML=`📊 <strong>${employees.length}</strong> співробітників · <strong>${trips.length}</strong> відряджень завантажено з Excel`;
+    ts.textContent=lastUpdate?`Оновлено: ${lastUpdate}`:'';}
 }
 
-// ═══════════════════════════════════════════════
-// INIT
-// ═══════════════════════════════════════════════
-initConfig();
-renderCalendar();
+function updateStats(){const yt=trips.filter(t=>t.start.startsWith(String(year)));
+  const emps=new Set(yt.map(t=>t.employee)).size;
+  const days=yt.reduce((a,t)=>a+Math.ceil((new Date(t.end)-new Date(t.start))/864e5)+1,0);
+  document.getElementById('sTrips').textContent=yt.length;
+  document.getElementById('sEmps').textContent=emps;
+  document.getElementById('sDays').textContent=days;}
+
+function render(){
+  const el=document.getElementById('content');
+  document.getElementById('yrLbl').textContent=year;
+  document.getElementById('hdrYear').textContent=year;
+  if(!dataLoaded){el.innerHTML=`<div class="no-data"><div class="no-data-icon">📂</div>
+    <div class="no-data-title">Завантажте дані</div>
+    <div class="no-data-text">Натисніть <strong>«📊 Оновити дані»</strong> вгорі та оберіть файл<br><code>calendar_romania_2026.xlsx</code></div>
+    <button class="btn-p" onclick="document.getElementById('fileInput').click()" style="font-size:14px;padding:12px 28px">📊 Обрати файл</button></div>`;return;}
+  const flt=getF(),today=new Date();let h='<div class="grid">';
+  for(let m=0;m<12;m++){
+    const n=dim(year,m),fw=fwd(year,m),isN=today.getFullYear()===year&&today.getMonth()===m,td=today.getDate();
+    const mt=tfm(m,flt),purp=purposes[m]||'';
+    h+=`<div class="card"><div class="m-hdr"><div style="flex:1;min-width:0"><div class="m-name">${M_UA[m]}</div>`;
+    if(purp)h+=`<div class="m-purp">🎯 ${purp}</div>`;
+    h+=`</div>`;if(mt.length)h+=`<span class="m-badge">${mt.length}</span>`;h+=`</div><div class="wr">`;
+    WD.forEach(w=>{h+=`<div class="wd">${w}</div>`;});h+=`</div>`;
+    let day=1,started=false;
+    while(day<=n){h+=`<div class="wr">`;
+      for(let i=0;i<7;i++){
+        if(!started&&i<fw){h+=`<div class="dc empty"></div>`;}
+        else if(day<=n){const dt=tfd(year,m,day,flt),isT=isN&&day===td,isW=i>=5;
+          let cls='dc';if(isT)cls+=' today';if(isW)cls+=' we';if(dt.length)cls+=' trip';
+          h+=`<div class="${cls}" onclick="openDay(${year},${m},${day})">${day}`;
+          if(dt.length){h+=`<div class="dots">`;dt.slice(0,4).forEach(t=>{h+=`<div class="dot" style="background:${ec(t.employee)}"></div>`;});h+=`</div>`;}
+          h+=`</div>`;day++;started=true;}
+        else{h+=`<div class="dc empty"></div>`;day++;}}h+=`</div>`;}
+    if(mt.length){h+=`<div class="m-trips">`;
+      mt.forEach(t=>{h+=`<div class="m-row"><div class="m-dot" style="background:${ec(t.employee)}"></div>`;
+        h+=`<span style="font-weight:600;color:#cbd5e1">${t.employee}</span>`;
+        h+=`<span style="color:#374151;font-size:9px">${er(t.employee)}</span>`;
+        h+=`<span style="margin-left:auto;font-size:9px;white-space:nowrap;color:var(--t3)">${fm(t.start)}–${fm(t.end)}</span>`;
+        h+=`<span style="font-size:9px;font-weight:600;color:${SC[t.status]||'#64748b'}">${t.status}</span></div>`;});
+      h+=`</div>`;}h+=`</div>`;}
+  h+=`</div>`;el.innerHTML=h;updateStats();}
+
+function openDay(y,m,d){const flt=getF(),dt=tfd(y,m,d,flt),purp=purposes[m]||'—';
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">`;
+  h+=`<div style="font-size:17px;font-weight:700;color:var(--t1)">📅 ${d} ${M_UA[m]} ${y}</div>`;
+  h+=`<button class="btn" onclick="closeDay()" style="padding:4px 10px">✕</button></div>`;
+  h+=`<div style="font-size:12px;color:#a78bfa;margin-bottom:12px;font-weight:500">🎯 ${purp}</div>`;
+  if(!dt.length){h+=`<div style="color:var(--t3);font-size:13px;text-align:center;padding:16px 0">Немає відряджень</div>`;}
+  else{dt.forEach(t=>{
+    h+=`<div class="t-card" style="border-left-color:${ec(t.employee)}">`;
+    h+=`<div style="font-size:14px;font-weight:600;color:var(--t1)">${t.employee}</div>`;
+    h+=`<div style="font-size:11px;color:#64748b;margin-top:2px">${er(t.employee)}</div>`;
+    h+=`<div style="font-size:12px;color:var(--t3);margin-top:3px">🇷🇴 Бухарест · ${fm(t.start)}–${fm(t.end)} <span style="margin-left:8px;color:${SC[t.status]||'#64748b'};font-weight:600">${t.status}</span></div>`;
+    if(t.purpose)h+=`<div style="font-size:11px;color:#a78bfa;margin-top:4px">🎯 ${t.purpose}</div>`;
+    h+=`</div>`;});}
+  document.getElementById('dayPop').innerHTML=h;document.getElementById('dayOv').classList.remove('hidden');}
+function closeDay(){document.getElementById('dayOv').classList.add('hidden');}
+function changeYear(d){year+=d;render();}
+
+loadCache();initSrc();render();updateInfo();
 </script>
 </body>
 </html>
