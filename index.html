@@ -104,7 +104,9 @@
 
   <!-- Update panel -->
   <div class="upd">
-    <button class="upd-btn" onclick="downloadAndUpdate()">📥 Завантажити та оновити</button>
+    <button class="upd-btn" onclick="downloadFile()">📥 Завантажити дані</button>
+    <span style="color:var(--t3);font-size:14px">→</span>
+    <button class="upd-btn" style="background:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,0.25)" onclick="document.getElementById('fileInput').click()">📊 Оновити дані</button>
     <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this)">
     <span id="updateHint" class="upd-hint"></span>
     <a href="https://avrora365.sharepoint.com/:x:/r/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx?d=wd0dd694f23324968803e3ed76a5c7229&csf=1&web=1&e=wbqXJc" target="_blank" class="upd-link">Відкрити Excel на SharePoint ↗</a>
@@ -142,13 +144,12 @@ let year=2026,employees=[],purposes=[],trips=[],dataLoaded=false,lastUpdate='';
 // ─── Auto download & update ───
 const SP_DOWNLOAD_URL='https://avrora365.sharepoint.com/sites/CommercialTeam2/_layouts/15/download.aspx?SourceUrl=/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx';
 
-function downloadAndUpdate(){
+function downloadFile(){
   const hint=document.getElementById('updateHint');
   const a=document.createElement('a');a.href=SP_DOWNLOAD_URL;a.style.display='none';
   document.body.appendChild(a);a.click();document.body.removeChild(a);
-  hint.textContent='⏳ Файл завантажується... Оберіть його нижче';
-  hint.style.color='#92400E';
-  setTimeout(()=>{document.getElementById('fileInput').click();},2000);
+  hint.textContent='✅ Файл завантажується → тепер натисніть «📊 Оновити дані» і оберіть його';
+  hint.style.color='#065F46';
 }
 
 // ─── Excel parsing ───
