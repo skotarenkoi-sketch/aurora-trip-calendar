@@ -7,76 +7,76 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-  :root{--bg:#0b1120;--bg2:rgba(255,255,255,0.025);--bd:rgba(255,255,255,0.06);--t1:#f1f5f9;--t2:#94a3b8;--t3:#475569;--blue:#3b82f6;--purple:#8b5cf6;--grad:linear-gradient(135deg,#3b82f6,#8b5cf6)}
+  :root{
+    --yellow:#FFD700;--yellow-dark:#E6B800;--yellow-light:#FFF8DC;--yellow-bg:#FFFEF5;
+    --red:#E31E24;--red-light:#FFF0F0;
+    --bg:#FFFFFF;--bg2:#F9FAFB;--bd:#E5E7EB;--bd2:#D1D5DB;
+    --t1:#1F2937;--t2:#4B5563;--t3:#9CA3AF;
+    --blue:#2563EB;--green:#059669;--amber:#D97706;--purple:#7C3AED;
+  }
   *{margin:0;padding:0;box-sizing:border-box}
-  body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--bg);color:var(--t1);min-height:100vh;line-height:1.5}
+  body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--bg2);color:var(--t1);min-height:100vh;line-height:1.5}
   .app{max-width:1400px;margin:0 auto;padding:20px 24px}
 
   /* Header */
-  .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:14px}
+  .hdr{background:var(--yellow);border-radius:14px;padding:16px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 16px rgba(230,184,0,0.25)}
   .logo{display:flex;align-items:center;gap:14px}
-  .logo-i{width:50px;height:50px;background:var(--grad);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:26px;box-shadow:0 4px 24px rgba(59,130,246,0.35)}
-  .logo-t{font-size:22px;font-weight:800;letter-spacing:-0.5px;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .logo-s{font-size:12px;color:var(--t3);margin-top:1px}
+  .logo-i{width:48px;height:48px;background:var(--red);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;box-shadow:0 2px 8px rgba(227,30,36,0.25)}
+  .logo-t{font-size:20px;font-weight:800;color:var(--t1);letter-spacing:-0.3px}
+  .logo-s{font-size:11px;color:rgba(0,0,0,0.45);margin-top:1px}
   .nav{display:flex;align-items:center;gap:6px}
-  .nav-b{width:32px;height:32px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.04);color:var(--t2);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
-  .yr{font-size:17px;font-weight:700;color:var(--t1);min-width:50px;text-align:center}
+  .nav-b{width:34px;height:34px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:rgba(255,255,255,0.5);color:var(--t1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .nav-b:hover{background:rgba(255,255,255,0.8)}
+  .yr{font-size:18px;font-weight:700;color:var(--t1);min-width:54px;text-align:center}
 
-  /* Steps instruction */
-  .steps{background:linear-gradient(135deg,rgba(59,130,246,0.05),rgba(139,92,246,0.05));border:1px solid rgba(99,102,241,0.12);border-radius:12px;padding:16px 20px;margin-bottom:14px}
-  .steps-title{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:10px}
-  .step{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:13px;color:#cbd5e1}
-  .step:last-child{margin-bottom:0}
-  .step-num{width:24px;height:24px;border-radius:50%;background:var(--grad);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .step a{color:#60a5fa;text-decoration:underline;font-weight:600;transition:color .2s}
-  .step a:hover{color:#93c5fd}
-  .step-btn{padding:5px 14px;border-radius:7px;border:none;background:var(--grad);color:#fff;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:4px;box-shadow:0 2px 10px rgba(59,130,246,0.25);transition:all .2s;white-space:nowrap}
-  .step-btn:hover{transform:translateY(-1px);box-shadow:0 4px 15px rgba(59,130,246,0.35)}
-  .step-arrow{color:var(--t3);font-size:11px}
+  /* Update panel */
+  .upd{background:var(--yellow-light);border:1px solid #F0E68C;border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .upd-btn{padding:8px 18px;border-radius:8px;border:none;background:var(--red);color:#fff;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(227,30,36,0.25);transition:all .2s;white-space:nowrap}
+  .upd-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(227,30,36,0.35);background:#CC1A1F}
+  .upd-link{font-size:11px;color:var(--blue);text-decoration:underline;margin-left:auto}
+  .upd-hint{font-size:11px;color:var(--t3)}
   #fileInput{display:none}
 
   /* Status bar */
   .status{border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-  .status.empty{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.15);color:#fbbf24}
-  .status.loaded{background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.15);color:#6ee7b7}
+  .status.empty{background:#FFF7ED;border:1px solid #FDE68A;color:#92400E}
+  .status.loaded{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
   .status .ts{margin-left:auto;font-size:10px;color:var(--t3)}
 
   /* Stats */
   .stats{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
-  .stat{background:var(--bg2);border-radius:12px;border:1px solid var(--bd);padding:12px 18px;flex:1;min-width:120px}
-  .stat-v{font-size:26px;font-weight:800;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-  .stat-l{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:1px}
-
-  /* Search */
-  .search{padding:8px 14px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.04);color:var(--t1);font-size:12px;width:260px;outline:none;font-family:inherit;margin-bottom:14px}
-  .search::placeholder{color:var(--t3)}
+  .stat{background:#fff;border-radius:12px;border:1px solid var(--bd);padding:14px 20px;flex:1;min-width:120px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+  .stat-v{font-size:28px;font-weight:800;color:var(--red)}
+  .stat-l{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
   /* Calendar grid */
   .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:12px}
-  .card{background:var(--bg2);border-radius:14px;border:1px solid var(--bd);padding:14px 16px}
+  .card{background:#fff;border-radius:14px;border:1px solid var(--bd);padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);transition:box-shadow .2s}
+  .card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
   .m-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
-  .m-name{font-size:10px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:1.5px}
-  .m-purp{font-size:10px;color:#a78bfa;margin-top:3px;font-weight:500;line-height:1.4}
-  .m-badge{font-size:10px;background:rgba(139,92,246,0.15);color:#a78bfa;padding:2px 8px;border-radius:16px;font-weight:600}
+  .m-name{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1.5px}
+  .m-purp{font-size:10px;color:var(--t2);margin-top:3px;font-weight:500;line-height:1.4}
+  .m-badge{font-size:10px;background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:16px;font-weight:700;border:1px solid rgba(227,30,36,0.15)}
   .wr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
   .wd{text-align:center;font-size:8px;color:var(--t3);font-weight:600;padding:2px 0;text-transform:uppercase}
   .dc{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--t2)}
-  .dc:hover{background:rgba(255,255,255,0.06)}
+  .dc:hover{background:#F3F4F6}
   .dc.empty{cursor:default}.dc.empty:hover{background:none}
-  .dc.today{background:rgba(59,130,246,0.15);color:#60a5fa;font-weight:700;box-shadow:inset 0 0 0 1.5px var(--blue)}
-  .dc.we{color:#2d3748}.dc.trip{background:rgba(139,92,246,0.1)}
+  .dc.today{background:var(--yellow-light);color:var(--amber);font-weight:700;box-shadow:inset 0 0 0 2px var(--yellow)}
+  .dc.we{color:var(--t3)}.dc.trip{background:var(--red-light)}
   .dots{position:absolute;bottom:2px;display:flex;gap:1.5px}
-  .dot{width:3px;height:3px;border-radius:50%}
+  .dot{width:3.5px;height:3.5px;border-radius:50%}
   .m-trips{margin-top:6px;border-top:1px solid var(--bd);padding-top:6px}
   .m-row{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2);margin-bottom:3px;flex-wrap:wrap}
   .m-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 
   /* Day popup */
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
   .overlay.hidden{display:none}
-  .popup{background:linear-gradient(135deg,#1e293b,#0f172a);border-radius:16px;border:1px solid rgba(255,255,255,0.1);padding:18px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.5)}
-  .t-card{background:rgba(255,255,255,0.04);border-radius:10px;padding:10px;margin-bottom:6px;border-left:3px solid}
-  .btn{padding:8px 16px;border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.04);color:var(--t2);cursor:pointer;font-size:12px;font-weight:500;font-family:inherit}
+  .popup{background:#fff;border-radius:16px;border:1px solid var(--bd);padding:20px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15)}
+  .t-card{background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:6px;border-left:3px solid}
+  .btn{padding:8px 16px;border-radius:8px;border:1px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-size:12px;font-weight:500;font-family:inherit}
+  .btn:hover{background:var(--bg2)}
 
   /* Empty state */
   .no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
@@ -84,7 +84,7 @@
   .no-data-title{font-size:18px;font-weight:700;color:var(--t1);margin-bottom:6px}
   .no-data-text{font-size:13px;color:var(--t3);max-width:380px;line-height:1.6}
 
-  @media(max-width:640px){.app{padding:12px}.grid{grid-template-columns:1fr}.search{width:100%}.step{font-size:12px}}
+  @media(max-width:640px){.app{padding:12px}.grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -92,7 +92,7 @@
   <!-- Header -->
   <div class="hdr">
     <div class="logo">
-      <div class="logo-i">🇷🇴</div>
+      <div class="logo-i">A</div>
       <div><div class="logo-t">Календар відряджень до Румунії</div><div class="logo-s">Аврора мультимаркет · Бухарест · <span id="hdrYear">2026</span></div></div>
     </div>
     <div class="nav">
@@ -103,12 +103,11 @@
   </div>
 
   <!-- Update panel -->
-  <div class="steps" style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-    <span style="font-size:13px;color:#cbd5e1">📋</span>
-    <button class="step-btn" style="background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 2px 10px rgba(16,185,129,0.25)" onclick="downloadAndUpdate()">📥 Завантажити та оновити</button>
-    <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this)" style="display:none">
-    <span id="updateHint" style="font-size:11px;color:var(--t3)"></span>
-    <a href="https://avrora365.sharepoint.com/:x:/r/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx?d=wd0dd694f23324968803e3ed76a5c7229&csf=1&web=1&e=wbqXJc" target="_blank" style="font-size:11px;color:#60a5fa;text-decoration:underline;margin-left:auto">Відкрити Excel на SharePoint ↗</a>
+  <div class="upd">
+    <button class="upd-btn" onclick="downloadAndUpdate()">📥 Завантажити та оновити</button>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this)">
+    <span id="updateHint" class="upd-hint"></span>
+    <a href="https://avrora365.sharepoint.com/:x:/r/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx?d=wd0dd694f23324968803e3ed76a5c7229&csf=1&web=1&e=wbqXJc" target="_blank" class="upd-link">Відкрити Excel на SharePoint ↗</a>
   </div>
 
   <!-- Status bar -->
@@ -124,9 +123,6 @@
     <div class="stat"><div class="stat-v" id="sDays">—</div><div class="stat-l">Днів у дорозі</div></div>
   </div>
 
-  <!-- Search -->
-  <input class="search" id="searchInput" placeholder="🔍 Пошук по імені..." oninput="render()">
-
   <!-- Calendar content -->
   <div id="content"></div>
 </div>
@@ -139,61 +135,38 @@
 <script>
 const M_UA=["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"];
 const WD=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
-const SC={Заплановано:"#f59e0b",Погоджено:"#3b82f6","В дорозі":"#10b981",Завершено:"#6b7280",Скасовано:"#ef4444"};
-const PAL=["#3B82F6","#10B981","#F59E0B","#EF4444","#8B5CF6","#EC4899","#06B6D4","#F97316","#14B8A6","#6366F1","#D946EF","#0EA5E9","#84CC16","#E11D48","#7C3AED","#059669"];
+const SC={Заплановано:"#D97706",Погоджено:"#2563EB","В дорозі":"#059669",Завершено:"#6B7280",Скасовано:"#DC2626"};
+const PAL=["#E31E24","#2563EB","#059669","#D97706","#7C3AED","#DB2777","#0891B2","#EA580C","#0D9488","#4F46E5","#C026D3","#0284C7","#65A30D","#BE123C","#6D28D9","#047857"];
 let year=2026,employees=[],purposes=[],trips=[],dataLoaded=false,lastUpdate='';
 
 // ─── Auto download & update ───
-const SP_DOWNLOAD_URL = 'https://avrora365.sharepoint.com/sites/CommercialTeam2/_layouts/15/download.aspx?SourceUrl=/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx';
+const SP_DOWNLOAD_URL='https://avrora365.sharepoint.com/sites/CommercialTeam2/_layouts/15/download.aspx?SourceUrl=/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx';
 
 function downloadAndUpdate(){
   const hint=document.getElementById('updateHint');
-  hint.textContent='⏳ Завантаження файлу...';
-  hint.style.color='#fbbf24';
-
-  fetch(SP_DOWNLOAD_URL,{credentials:'include'})
-    .then(r=>{
-      if(!r.ok) throw new Error('Не вдалося завантажити');
-      return r.arrayBuffer();
-    })
-    .then(buf=>{
-      try{
-        const wb=XLSX.read(buf,{type:'array',cellDates:true});
-        parseWorkbook(wb); dataLoaded=true;
-        lastUpdate=new Date().toLocaleString('uk-UA');
-        saveCache(); render(); updateStatus();
-        hint.textContent='✅ Дані оновлено!';
-        hint.style.color='#6ee7b7';
-        setTimeout(()=>{hint.textContent='';},3000);
-      }catch(err){
-        hint.textContent='❌ Помилка парсингу: '+err.message;
-        hint.style.color='#f87171';
-      }
-    })
-    .catch(err=>{
-      // Fallback: auto-download didn't work, open file picker
-      hint.textContent='Автозавантаження недоступне — оберіть файл вручну';
-      hint.style.color='#fbbf24';
-      // Trigger download via hidden link
-      const a=document.createElement('a');a.href=SP_DOWNLOAD_URL;a.target='_blank';a.click();
-      // Show file picker after short delay
-      setTimeout(()=>{document.getElementById('fileInput').click();},1500);
-    });
+  const a=document.createElement('a');a.href=SP_DOWNLOAD_URL;a.style.display='none';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  hint.textContent='⏳ Файл завантажується... Оберіть його нижче';
+  hint.style.color='#92400E';
+  setTimeout(()=>{document.getElementById('fileInput').click();},2000);
 }
 
 // ─── Excel parsing ───
 function handleFile(input){
-  const file=input.files[0]; if(!file)return;
+  const file=input.files[0];if(!file)return;
   const reader=new FileReader();
   reader.onload=function(e){
     try{
       const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
-      parseWorkbook(wb); dataLoaded=true;
+      parseWorkbook(wb);dataLoaded=true;
       lastUpdate=new Date().toLocaleString('uk-UA');
-      saveCache(); render(); updateStatus();
+      saveCache();render();updateStatus();
+      const hint=document.getElementById('updateHint');
+      hint.textContent='✅ Дані оновлено!';hint.style.color='#065F46';
+      setTimeout(()=>{hint.textContent='';},3000);
     }catch(err){alert('Помилка читання файлу: '+err.message);}
   };
-  reader.readAsArrayBuffer(file); input.value='';
+  reader.readAsArrayBuffer(file);input.value='';
 }
 
 function parseWorkbook(wb){
@@ -231,33 +204,24 @@ function pd(v){
   const s=String(v).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return null;
 }
 
-// ─── Cache ───
 function saveCache(){try{localStorage.setItem('aurora_cal',JSON.stringify({employees,purposes,trips,lastUpdate}));}catch(e){}}
 function loadCache(){try{const d=JSON.parse(localStorage.getItem('aurora_cal'));
   if(d&&d.trips&&d.trips.length){employees=d.employees||[];purposes=d.purposes||[];trips=d.trips||[];lastUpdate=d.lastUpdate||'';dataLoaded=true;}}catch(e){}}
 
-// ─── Status ───
 function updateStatus(){
   const bar=document.getElementById('statusBar'),txt=document.getElementById('statusText'),ts=document.getElementById('statusTs');
-  if(dataLoaded){
-    bar.className='status loaded';
+  if(dataLoaded){bar.className='status loaded';
     txt.innerHTML=`✅ <strong>${employees.length}</strong> співробітників · <strong>${trips.length}</strong> відряджень завантажено`;
     ts.textContent=lastUpdate?`Оновлено: ${lastUpdate}`:'';
-  } else {
-    bar.className='status empty';
-    txt.innerHTML='⏳ Дані ще не завантажені — натисніть «📥 Завантажити та оновити»';
-    ts.textContent='';
-  }
-}
+  }else{bar.className='status empty';
+    txt.innerHTML='⏳ Дані ще не завантажені — натисніть «📥 Завантажити та оновити»';ts.textContent='';}}
 
-// ─── Helpers ───
 function ec(name){const i=employees.findIndex(e=>e.name===name);return PAL[(i>=0?i:0)%PAL.length];}
 function er(name){const e=employees.find(e=>e.name===name);return e?.role||'';}
 function fm(ds){const d=new Date(ds);return`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;}
 function dim(y,m){return new Date(y,m+1,0).getDate();}
 function fwd(y,m){const d=new Date(y,m,1).getDay();return d===0?6:d-1;}
-function getF(){const q=(document.getElementById('searchInput').value||'').toLowerCase();
-  if(!q)return trips;return trips.filter(t=>t.employee.toLowerCase().includes(q)||er(t.employee).toLowerCase().includes(q));}
+function getF(){return trips;}
 function tfd(y,m,d,l){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return l.filter(t=>t.start<=ds&&t.end>=ds);}
 function tfm(m,l){return l.filter(t=>{const sm=new Date(t.start).getMonth(),em=new Date(t.end).getMonth();return sm===m||em===m;});}
 
@@ -268,14 +232,12 @@ function updateStats(){const yt=trips.filter(t=>t.start.startsWith(String(year))
   document.getElementById('sEmps').textContent=emps;
   document.getElementById('sDays').textContent=days;}
 
-// ─── Render ───
 function render(){
   const el=document.getElementById('content');
-  document.getElementById('yrLbl').textContent=year;
-  document.getElementById('hdrYear').textContent=year;
+  document.getElementById('yrLbl').textContent=year;document.getElementById('hdrYear').textContent=year;
   if(!dataLoaded){el.innerHTML=`<div class="no-data"><div class="no-data-icon">📂</div>
     <div class="no-data-title">Дані ще не завантажені</div>
-    <div class="no-data-text">Натисніть кнопку вище щоб завантажити актуальні дані з SharePoint</div></div>`;return;}
+    <div class="no-data-text">Натисніть кнопку <strong>«📥 Завантажити та оновити»</strong> щоб побачити календар</div></div>`;return;}
   const flt=getF(),today=new Date();let h='<div class="grid">';
   for(let m=0;m<12;m++){
     const n=dim(year,m),fw=fwd(year,m),isN=today.getFullYear()===year&&today.getMonth()===m,td=today.getDate();
@@ -296,32 +258,30 @@ function render(){
         else{h+=`<div class="dc empty"></div>`;day++;}}h+=`</div>`;}
     if(mt.length){h+=`<div class="m-trips">`;
       mt.forEach(t=>{h+=`<div class="m-row"><div class="m-dot" style="background:${ec(t.employee)}"></div>`;
-        h+=`<span style="font-weight:600;color:#cbd5e1">${t.employee}</span>`;
-        h+=`<span style="color:#374151;font-size:9px">${er(t.employee)}</span>`;
+        h+=`<span style="font-weight:600;color:var(--t1)">${t.employee}</span>`;
+        h+=`<span style="color:var(--t3);font-size:9px">${er(t.employee)}</span>`;
         h+=`<span style="margin-left:auto;font-size:9px;white-space:nowrap;color:var(--t3)">${fm(t.start)}–${fm(t.end)}</span>`;
-        h+=`<span style="font-size:9px;font-weight:600;color:${SC[t.status]||'#64748b'}">${t.status}</span></div>`;});
+        h+=`<span style="font-size:9px;font-weight:600;color:${SC[t.status]||'#6B7280'}">${t.status}</span></div>`;});
       h+=`</div>`;}h+=`</div>`;}
   h+=`</div>`;el.innerHTML=h;updateStats();}
 
-// ─── Day popup ───
 function openDay(y,m,d){const flt=getF(),dt=tfd(y,m,d,flt),purp=purposes[m]||'—';
-  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">`;
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">`;
   h+=`<div style="font-size:17px;font-weight:700;color:var(--t1)">📅 ${d} ${M_UA[m]} ${y}</div>`;
   h+=`<button class="btn" onclick="closeDay()" style="padding:4px 10px">✕</button></div>`;
-  h+=`<div style="font-size:12px;color:#a78bfa;margin-bottom:12px;font-weight:500">🎯 ${purp}</div>`;
+  h+=`<div style="font-size:12px;color:var(--t2);margin-bottom:12px;font-weight:500">🎯 ${purp}</div>`;
   if(!dt.length){h+=`<div style="color:var(--t3);font-size:13px;text-align:center;padding:16px 0">Немає відряджень</div>`;}
   else{dt.forEach(t=>{
     h+=`<div class="t-card" style="border-left-color:${ec(t.employee)}">`;
     h+=`<div style="font-size:14px;font-weight:600;color:var(--t1)">${t.employee}</div>`;
-    h+=`<div style="font-size:11px;color:#64748b;margin-top:2px">${er(t.employee)}</div>`;
-    h+=`<div style="font-size:12px;color:var(--t3);margin-top:3px">🇷🇴 Бухарест · ${fm(t.start)}–${fm(t.end)} <span style="margin-left:8px;color:${SC[t.status]||'#64748b'};font-weight:600">${t.status}</span></div>`;
-    if(t.purpose)h+=`<div style="font-size:11px;color:#a78bfa;margin-top:4px">🎯 ${t.purpose}</div>`;
+    h+=`<div style="font-size:11px;color:var(--t3);margin-top:2px">${er(t.employee)}</div>`;
+    h+=`<div style="font-size:12px;color:var(--t2);margin-top:3px">🇷🇴 Бухарест · ${fm(t.start)}–${fm(t.end)} <span style="margin-left:8px;color:${SC[t.status]||'#6B7280'};font-weight:600">${t.status}</span></div>`;
+    if(t.purpose)h+=`<div style="font-size:11px;color:var(--t2);margin-top:4px">🎯 ${t.purpose}</div>`;
     h+=`</div>`;});}
   document.getElementById('dayPop').innerHTML=h;document.getElementById('dayOv').classList.remove('hidden');}
 function closeDay(){document.getElementById('dayOv').classList.add('hidden');}
 function changeYear(d){year+=d;render();}
 
-// ─── Init ───
 loadCache();render();updateStatus();
 </script>
 </body>
