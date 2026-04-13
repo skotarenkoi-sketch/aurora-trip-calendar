@@ -224,7 +224,7 @@ function dim(y,m){return new Date(y,m+1,0).getDate();}
 function fwd(y,m){const d=new Date(y,m,1).getDay();return d===0?6:d-1;}
 function getF(){return trips;}
 function tfd(y,m,d,l){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return l.filter(t=>t.start<=ds&&t.end>=ds);}
-function tfm(m,l){return l.filter(t=>{const sm=new Date(t.start).getMonth(),em=new Date(t.end).getMonth();return sm===m||em===m;});}
+function tfm(y,m,l){return l.filter(t=>{const sd=new Date(t.start),ed=new Date(t.end);return(sd.getFullYear()===y&&sd.getMonth()===m)||(ed.getFullYear()===y&&ed.getMonth()===m);});}
 
 function updateStats(){const yt=trips.filter(t=>t.start.startsWith(String(year)));
   const emps=new Set(yt.map(t=>t.employee)).size;
@@ -242,7 +242,7 @@ function render(){
   const flt=getF(),today=new Date();let h='<div class="grid">';
   for(let m=0;m<12;m++){
     const n=dim(year,m),fw=fwd(year,m),isN=today.getFullYear()===year&&today.getMonth()===m,td=today.getDate();
-    const mt=tfm(m,flt),purp=purposes[m]||'';
+    const mt=tfm(year,m,flt),purp=purposes[m]||'';
     h+=`<div class="card"><div class="m-hdr"><div style="flex:1;min-width:0"><div class="m-name">${M_UA[m]}</div>`;
     if(purp)h+=`<div class="m-purp">🎯 ${purp}</div>`;
     h+=`</div>`;if(mt.length)h+=`<span class="m-badge">${mt.length}</span>`;h+=`</div><div class="wr">`;
