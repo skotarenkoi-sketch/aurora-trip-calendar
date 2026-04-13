@@ -242,7 +242,7 @@ function render(){
   const flt=getF(),today=new Date();let h='<div class="grid">';
   for(let m=0;m<12;m++){
     const n=dim(year,m),fw=fwd(year,m),isN=today.getFullYear()===year&&today.getMonth()===m,td=today.getDate();
-    const mt=tfm(year,m,flt),purp=purposes[m]||'';
+    const mt=tfm(year,m,flt),purp=mt.length>0?(purposes[m]||''):'';
     h+=`<div class="card"><div class="m-hdr"><div style="flex:1;min-width:0"><div class="m-name">${M_UA[m]}</div>`;
     if(purp)h+=`<div class="m-purp">🎯 ${purp}</div>`;
     h+=`</div>`;if(mt.length)h+=`<span class="m-badge">${mt.length}</span>`;h+=`</div><div class="wr">`;
