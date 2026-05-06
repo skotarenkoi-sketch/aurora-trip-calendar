@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Календар відряджень до Румунії — Аврора мультимаркет</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+  :root{
+    --yellow:#FFD700;--yellow-dark:#E6B800;--yellow-light:#FFF8DC;--yellow-bg:#FFFEF5;
+    --red:#E31E24;--red-light:#FFF0F0;
+    --bg:#FFFFFF;--bg2:#F9FAFB;--bd:#E5E7EB;--bd2:#D1D5DB;
+    --t1:#1F2937;--t2:#4B5563;--t3:#9CA3AF;
+    --blue:#2563EB;--green:#059669;--amber:#D97706;--purple:#7C3AED;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Inter',-apple-system,'Segoe UI',sans-serif;background:var(--bg2);color:var(--t1);min-height:100vh;line-height:1.5}
+  .app{max-width:1400px;margin:0 auto;padding:20px 24px}
+
+  /* Header */
+  .hdr{background:var(--yellow);border-radius:14px;padding:16px 24px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;box-shadow:0 4px 16px rgba(230,184,0,0.25)}
+  .logo{display:flex;align-items:center;gap:14px}
+  .logo-i{width:48px;height:48px;background:var(--red);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;box-shadow:0 2px 8px rgba(227,30,36,0.25)}
+  .logo-t{font-size:20px;font-weight:800;color:var(--t1);letter-spacing:-0.3px}
+  .logo-s{font-size:11px;color:rgba(0,0,0,0.45);margin-top:1px}
+  .nav{display:flex;align-items:center;gap:6px}
+  .nav-b{width:34px;height:34px;border-radius:8px;border:1px solid rgba(0,0,0,0.1);background:rgba(255,255,255,0.5);color:var(--t1);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+  .nav-b:hover{background:rgba(255,255,255,0.8)}
+  .yr{font-size:18px;font-weight:700;color:var(--t1);min-width:54px;text-align:center}
+
+  /* Update panel */
+  .upd{background:var(--yellow-light);border:1px solid #F0E68C;border-radius:12px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+  .upd-btn{padding:8px 18px;border-radius:8px;border:none;background:var(--red);color:#fff;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;display:inline-flex;align-items:center;gap:5px;box-shadow:0 2px 8px rgba(227,30,36,0.25);transition:all .2s;white-space:nowrap}
+  .upd-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(227,30,36,0.35);background:#CC1A1F}
+  .upd-link{font-size:11px;color:var(--blue);text-decoration:underline;margin-left:auto}
+  .upd-hint{font-size:11px;color:var(--t3)}
+  #fileInput{display:none}
+
+  /* Status bar */
+  .status{border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .status.empty{background:#FFF7ED;border:1px solid #FDE68A;color:#92400E}
+  .status.loaded{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46}
+  .status .ts{margin-left:auto;font-size:10px;color:var(--t3)}
+
+  /* Stats */
+  .stats{display:flex;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .stat{background:#fff;border-radius:12px;border:1px solid var(--bd);padding:14px 20px;flex:1;min-width:120px;box-shadow:0 1px 3px rgba(0,0,0,0.05)}
+  .stat-v{font-size:28px;font-weight:800;color:var(--red)}
+  .stat-l{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+  /* Calendar grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(295px,1fr));gap:12px}
+  .card{background:#fff;border-radius:14px;border:1px solid var(--bd);padding:14px 16px;box-shadow:0 1px 3px rgba(0,0,0,0.04);transition:box-shadow .2s}
+  .card:hover{box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+  .m-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+  .m-name{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:1.5px}
+  .m-purp{font-size:10px;color:var(--t2);margin-top:3px;font-weight:500;line-height:1.4}
+  .m-badge{font-size:10px;background:var(--red-light);color:var(--red);padding:2px 8px;border-radius:16px;font-weight:700;border:1px solid rgba(227,30,36,0.15)}
+  .wr{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:2px}
+  .wd{text-align:center;font-size:8px;color:var(--t3);font-weight:600;padding:2px 0;text-transform:uppercase}
+  .dc{position:relative;aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:6px;font-size:11px;font-weight:500;cursor:pointer;transition:all .15s;color:var(--t2)}
+  .dc:hover{background:#F3F4F6}
+  .dc.empty{cursor:default}.dc.empty:hover{background:none}
+  .dc.today{background:var(--yellow-light);color:var(--amber);font-weight:700;box-shadow:inset 0 0 0 2px var(--yellow)}
+  .dc.we{color:var(--t3)}.dc.trip{background:var(--red-light)}
+  .dots{position:absolute;bottom:2px;display:flex;gap:1.5px}
+  .dot{width:3.5px;height:3.5px;border-radius:50%}
+  .m-trips{margin-top:6px;border-top:1px solid var(--bd);padding-top:6px}
+  .m-row{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--t2);margin-bottom:3px;flex-wrap:wrap}
+  .m-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+  /* Day popup */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px}
+  .overlay.hidden{display:none}
+  .popup{background:#fff;border-radius:16px;border:1px solid var(--bd);padding:20px;width:100%;max-width:420px;max-height:80vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,0.15)}
+  .t-card{background:var(--bg2);border-radius:10px;padding:10px;margin-bottom:6px;border-left:3px solid}
+  .btn{padding:8px 16px;border-radius:8px;border:1px solid var(--bd);background:#fff;color:var(--t2);cursor:pointer;font-size:12px;font-weight:500;font-family:inherit}
+  .btn:hover{background:var(--bg2)}
+
+  /* Empty state */
+  .no-data{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;text-align:center}
+  .no-data-icon{font-size:56px;margin-bottom:12px}
+  .no-data-title{font-size:18px;font-weight:700;color:var(--t1);margin-bottom:6px}
+  .no-data-text{font-size:13px;color:var(--t3);max-width:380px;line-height:1.6}
+
+  @media(max-width:640px){.app{padding:12px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- Header -->
+  <div class="hdr">
+    <div class="logo">
+      <div class="logo-i">A</div>
+      <div><div class="logo-t">Календар відряджень до Румунії</div><div class="logo-s">Аврора мультимаркет · Бухарест · <span id="hdrYear">2026</span></div></div>
+    </div>
+    <div class="nav">
+      <button class="nav-b" onclick="changeYear(-1)">‹</button>
+      <span class="yr" id="yrLbl">2026</span>
+      <button class="nav-b" onclick="changeYear(1)">›</button>
+    </div>
+  </div>
+
+  <!-- Update panel -->
+  <div class="upd">
+    <button class="upd-btn" onclick="downloadFile()">📥 Завантажити дані</button>
+    <span style="color:var(--t3);font-size:14px">→</span>
+    <button class="upd-btn" style="background:var(--blue);box-shadow:0 2px 8px rgba(37,99,235,0.25)" onclick="document.getElementById('fileInput').click()">📊 Оновити дані</button>
+    <input type="file" id="fileInput" accept=".xlsx,.xls" onchange="handleFile(this)">
+    <span id="updateHint" class="upd-hint"></span>
+    <a href="https://avrora365.sharepoint.com/:x:/r/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx?d=wd0dd694f23324968803e3ed76a5c7229&csf=1&web=1&e=wbqXJc" target="_blank" class="upd-link">Відкрити Excel на SharePoint ↗</a>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status" id="statusBar">
+    <span id="statusText"></span>
+    <span class="ts" id="statusTs"></span>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat"><div class="stat-v" id="sTrips">—</div><div class="stat-l">Відряджень</div></div>
+    <div class="stat"><div class="stat-v" id="sEmps">—</div><div class="stat-l">Співробітників</div></div>
+    <div class="stat"><div class="stat-v" id="sDays">—</div><div class="stat-l">Днів у дорозі</div></div>
+  </div>
+
+  <!-- Calendar content -->
+  <div id="content"></div>
+</div>
+
+<!-- Day popup -->
+<div class="overlay hidden" id="dayOv" onclick="closeDay()">
+  <div class="popup" onclick="event.stopPropagation()" id="dayPop"></div>
+</div>
+
+<script>
+const M_UA=["Січень","Лютий","Березень","Квітень","Травень","Червень","Липень","Серпень","Вересень","Жовтень","Листопад","Грудень"];
+const WD=["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
+const SC={Заплановано:"#D97706",Погоджено:"#2563EB","В дорозі":"#059669",Завершено:"#6B7280",Скасовано:"#DC2626"};
+const PAL=["#E31E24","#2563EB","#059669","#D97706","#7C3AED","#DB2777","#0891B2","#EA580C","#0D9488","#4F46E5","#C026D3","#0284C7","#65A30D","#BE123C","#6D28D9","#047857"];
+let year=2026,employees=[],purposes=[],trips=[],dataLoaded=false,lastUpdate='';
+
+// ─── Demo data from Excel ───
+function loadDemoData(){
+  employees=[{name:'Доценко Олександр',email:'A.Docenko@avrora.ua',role:'Commercial Director'},{name:'Безрук Максим',email:'M.Bezruk@avrora.ua',role:'Head of Sales'},{name:'Хмельницька Тетяна',email:'T.Roy@avrora.ua',role:'Enablement Director'},{name:'Скрипак Ангеліна',email:'a.skrypak@avrora.ua',role:'Lead of stream "Home"'},{name:'Семергей Ірина',email:'i.semerhei@avrora.ua',role:'Lead of stream " FMCG"'},{name:'Деркач Станіслав',email:'s.derkach@avrora.ua',role:'Lead of stream "Fashion"'},{name:'Кухар Ірина',email:'i.kukhar@avrora.ua',role:'Lead of stream "Beauty"'},{name:'Чемерис Аліна',email:'A.Chemerys@avrora.ua',role:'Lead of stream "Mom & Baby"'},{name:'Ковальов Роман',email:'r.kovalov@avrora.ua',role:'Lead of stream "Health & Hygiene"'},{name:'Скотаренко Ігор',email:'i.skotarenko@avrora.ua',role:'Lead of stream "Seasonal & DIY"'}];
+  purposes=['Фокус робіт:\n•\tСтруктурування CORE / TOP / Other\n•\tФормування CORE-листа (253 SKU)\n•\tКритерії TOP SKU\n•\tФормула замовлень (coverage / OOS)\n•\tБаланс локальні vs глобальні SKU','Фокус робіт:\n•\tВоркшоп (презентація)\n•\tКалендар переговорів\n•\tKPI постачальників у BI\n•\tПротокол переговорів','Фокус робіт:\n•\tКалендар сезонів\n•\tДати старт / завершення\n•\tLead time сезонів\n•\tЛогіка входу / виходу з сезону','Фокус робіт:\n•\tПідготовка до переговорів\n•\tРобота з контрактами\n•\tУзгодження умов','Фокус робіт:\n•\tНавчання команди\n•\tОптимізація процесів\n•\tАналіз результатів','Фокус робіт:\n•\tЛітня підготовка\n•\tПереговори з постачальниками\n•\tАсортиментна робота','Фокус робіт:\n•\tПідготовка до осені\n•\tАналіз літнього сезону\n•\tПланування закупівель','Фокус робіт:\n•\tЗапуск осінньої кампанії\n•\tРобота з новинками\n•\tКонтроль поставок','Фокус робіт:\n•\tПідготовка до Q4\n•\tПередсвяткові переговори\n•\tПланування промо','Фокус робіт:\n•\tЗапуск новорічної кампанії\n•\tФінальні узгодження\n•\tРобота зі святковим асортиментом','Фокус робіт:\n•\tПредставлення світовим брендам\n•\tЗакриття року з партнерами\n•\tПідготовка до 2027','Фокус робіт:\n•\tПідведення підсумків\n•\tПланування наступного року\n•\tСтратегічна сесія'];
+  trips=[{id:1,employee:'Доценко Олександр',month:'Січень',start:'2026-01-12',end:'2026-01-16',purpose:'Оптимізація асортиментної структури та стабільності наявності',status:'Заплановано'},{id:2,employee:'Безрук Максим',month:'Січень',start:'2026-01-12',end:'2026-01-16',purpose:'Оптимізація асортиментної структури та стабільності наявності',status:'Заплановано'},{id:3,employee:'Хмельницька Тетяна',month:'Лютий',start:'2026-02-09',end:'2026-02-13',purpose:'Впорядкування взаємодії з партнерами',status:'Заплановано'},{id:4,employee:'Скрипак Ангеліна',month:'Лютий',start:'2026-02-09',end:'2026-02-13',purpose:'Впорядкування взаємодії з партнерами',status:'Заплановано'},{id:5,employee:'Семергей Ірина',month:'Лютий',start:'2026-02-09',end:'2026-02-13',purpose:'Впорядкування взаємодії з партнерами',status:'Заплановано'},{id:6,employee:'Деркач Станіслав',month:'Березень',start:'2026-03-09',end:'2026-03-13',purpose:'Сезонне планування та узгодження строків',status:'Заплановано'},{id:7,employee:'Кухар Ірина',month:'Березень',start:'2026-03-09',end:'2026-03-13',purpose:'Сезонне планування та узгодження строків',status:'Заплановано'},{id:8,employee:'Чемерис Аліна',month:'Квітень',start:'2026-04-13',end:'2026-04-17',purpose:'Контроль якості та узгодження процесів',status:'Заплановано'}];
+  dataLoaded=true;lastUpdate='Демо-дані з Excel';saveCache();
+}
+
+// ─── Auto download & update ───
+const SP_DOWNLOAD_URL='https://avrora365.sharepoint.com/sites/CommercialTeam2/_layouts/15/download.aspx?SourceUrl=/sites/CommercialTeam2/Shared%20Documents/%D0%9A%D1%83%D1%85%D0%BD%D1%8F%20%D0%9A%D0%BE%D0%BC%D0%B5%D1%80%D1%86%D1%96%D1%97/%D0%92%D1%96%D0%B4%D1%80%D1%8F%D0%B4%D0%B6%D0%B5%D0%BD%D0%BD%D1%8F/calendar_romania_2026.xlsx';
+
+function downloadFile(){
+  const hint=document.getElementById('updateHint');
+  const a=document.createElement('a');a.href=SP_DOWNLOAD_URL;a.style.display='none';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  hint.textContent='✅ Файл завантажується → тепер натисніть «📊 Оновити дані» і оберіть його';
+  hint.style.color='#065F46';
+}
+
+// ─── Excel parsing ───
+function handleFile(input){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      const wb=XLSX.read(e.target.result,{type:'array',cellDates:true});
+      parseWorkbook(wb);dataLoaded=true;
+      lastUpdate=new Date().toLocaleString('uk-UA');
+      saveCache();render();updateStatus();
+      const hint=document.getElementById('updateHint');
+      hint.textContent='✅ Дані оновлено!';hint.style.color='#065F46';
+      setTimeout(()=>{hint.textContent='';},3000);
+    }catch(err){alert('Помилка читання файлу: '+err.message);}
+  };
+  reader.readAsArrayBuffer(file);input.value='';
+}
+
+function parseWorkbook(wb){
+  const wsE=wb.Sheets['Співробітники'];
+  if(wsE){const raw=XLSX.utils.sheet_to_json(wsE,{range:3});
+    employees=raw.filter(r=>r['ПІБ співробітника']).map(r=>({
+      name:String(r['ПІБ співробітника']||'').trim(),
+      email:String(r['Електронна пошта']||'').trim(),
+      role:String(r['Посада']||'').trim()
+    }));
+  }
+  const wsP=wb.Sheets['Мета по місяцях'];
+  if(wsP){const raw=XLSX.utils.sheet_to_json(wsP,{range:3});
+    purposes=[];
+    raw.forEach(r=>{const m=String(r['Місяць']||'').trim(),i=M_UA.indexOf(m);
+      if(i>=0)purposes[i]=String(r['Мета відрядження']||'').trim();
+    });
+  }
+  const wsT=wb.Sheets['Відрядження'];
+  if(wsT){const raw=XLSX.utils.sheet_to_json(wsT,{range:3,cellDates:true});
+    trips=[];
+    raw.forEach((r,i)=>{
+      const name=String(r['ПІБ співробітника']||'').trim();if(!name)return;
+      const start=pd(r['Дата початку']),end=pd(r['Дата завершення']);if(!start||!end)return;
+      trips.push({id:i+1,employee:name,month:String(r['Місяць']||'').trim(),
+        start,end,purpose:String(r['Мета (авто)']||'').trim(),
+        status:String(r['Статус']||'Заплановано').trim()});
+    });
+  }
+}
+
+function pd(v){
+  if(!v)return null;
+  if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return`${y}-${m}-${d}`;}
+  const s=String(v).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return null;
+}
+
+function saveCache(){try{localStorage.setItem('aurora_cal',JSON.stringify({employees,purposes,trips,lastUpdate}));}catch(e){}}
+function loadCache(){try{const d=JSON.parse(localStorage.getItem('aurora_cal'));
+  if(d&&d.trips&&d.trips.length){employees=d.employees||[];purposes=d.purposes||[];trips=d.trips||[];lastUpdate=d.lastUpdate||'';dataLoaded=true;}}catch(e){}}
+
+function updateStatus(){
+  const bar=document.getElementById('statusBar'),txt=document.getElementById('statusText'),ts=document.getElementById('statusTs');
+  if(dataLoaded){bar.className='status loaded';
+    txt.innerHTML=`✅ <strong>${employees.length}</strong> співробітників · <strong>${trips.length}</strong> відряджень завантажено`;
+    ts.textContent=lastUpdate?`Оновлено: ${lastUpdate}`:'';
+  }else{bar.className='status empty';
+    txt.innerHTML='⏳ Дані ще не завантажені — натисніть «📥 Завантажити та оновити»';ts.textContent='';}}
+
+function ec(name){const i=employees.findIndex(e=>e.name===name);return PAL[(i>=0?i:0)%PAL.length];}
+function er(name){const e=employees.find(e=>e.name===name);return e?.role||'';}
+function fm(ds){const d=new Date(ds);return`${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`;}
+function dim(y,m){return new Date(y,m+1,0).getDate();}
+function fwd(y,m){const d=new Date(y,m,1).getDay();return d===0?6:d-1;}
+function getF(){return trips;}
+function tfd(y,m,d,l){const ds=`${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;return l.filter(t=>t.start<=ds&&t.end>=ds);}
+function tfm(y,m,l){return l.filter(t=>{const sd=new Date(t.start),ed=new Date(t.end);return(sd.getFullYear()===y&&sd.getMonth()===m)||(ed.getFullYear()===y&&ed.getMonth()===m);});}
+
+function updateStats(){const yt=trips.filter(t=>t.start.startsWith(String(year)));
+  const emps=new Set(yt.map(t=>t.employee)).size;
+  const days=yt.reduce((a,t)=>a+Math.ceil((new Date(t.end)-new Date(t.start))/864e5)+1,0);
+  document.getElementById('sTrips').textContent=yt.length;
+  document.getElementById('sEmps').textContent=emps;
+  document.getElementById('sDays').textContent=days;}
+
+function render(){
+  const el=document.getElementById('content');
+  document.getElementById('yrLbl').textContent=year;document.getElementById('hdrYear').textContent=year;
+  if(!dataLoaded){el.innerHTML=`<div class="no-data"><div class="no-data-icon">📂</div>
+    <div class="no-data-title">Дані ще не завантажені</div>
+    <div class="no-data-text">Натисніть кнопку <strong>«📥 Завантажити та оновити»</strong> щоб побачити календар</div></div>`;return;}
+  const flt=getF(),today=new Date();let h='<div class="grid">';
+  for(let m=0;m<12;m++){
+    const n=dim(year,m),fw=fwd(year,m),isN=today.getFullYear()===year&&today.getMonth()===m,td=today.getDate();
+    const mt=tfm(year,m,flt),purp=mt.length>0?(purposes[m]||''):'';
+    h+=`<div class="card"><div class="m-hdr"><div style="flex:1;min-width:0"><div class="m-name">${M_UA[m]}</div>`;
+    if(purp)h+=`<div class="m-purp">🎯 ${purp}</div>`;
+    h+=`</div>`;if(mt.length)h+=`<span class="m-badge">${mt.length}</span>`;h+=`</div><div class="wr">`;
+    WD.forEach(w=>{h+=`<div class="wd">${w}</div>`;});h+=`</div>`;
+    let day=1,started=false;
+    while(day<=n){h+=`<div class="wr">`;
+      for(let i=0;i<7;i++){
+        if(!started&&i<fw){h+=`<div class="dc empty"></div>`;}
+        else if(day<=n){const dt=tfd(year,m,day,flt),isT=isN&&day===td,isW=i>=5;
+          let cls='dc';if(isT)cls+=' today';if(isW)cls+=' we';if(dt.length)cls+=' trip';
+          h+=`<div class="${cls}" onclick="openDay(${year},${m},${day})">${day}`;
+          if(dt.length){h+=`<div class="dots">`;dt.slice(0,4).forEach(t=>{h+=`<div class="dot" style="background:${ec(t.employee)}"></div>`;});h+=`</div>`;}
+          h+=`</div>`;day++;started=true;}
+        else{h+=`<div class="dc empty"></div>`;day++;}}h+=`</div>`;}
+    if(mt.length){h+=`<div class="m-trips">`;
+      mt.forEach(t=>{h+=`<div class="m-row"><div class="m-dot" style="background:${ec(t.employee)}"></div>`;
+        h+=`<span style="font-weight:600;color:var(--t1)">${t.employee}</span>`;
+        h+=`<span style="color:var(--t3);font-size:9px">${er(t.employee)}</span>`;
+        h+=`<span style="margin-left:auto;font-size:9px;white-space:nowrap;color:var(--t3)">${fm(t.start)}–${fm(t.end)}</span>`;
+        h+=`<span style="font-size:9px;font-weight:600;color:${SC[t.status]||'#6B7280'}">${t.status}</span></div>`;});
+      h+=`</div>`;}h+=`</div>`;}
+  h+=`</div>`;el.innerHTML=h;updateStats();}
+
+function openDay(y,m,d){const flt=getF(),dt=tfd(y,m,d,flt),purp=purposes[m]||'—';
+  let h=`<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">`;
+  h+=`<div style="font-size:17px;font-weight:700;color:var(--t1)">📅 ${d} ${M_UA[m]} ${y}</div>`;
+  h+=`<button class="btn" onclick="closeDay()" style="padding:4px 10px">✕</button></div>`;
+  h+=`<div style="font-size:12px;color:var(--t2);margin-bottom:12px;font-weight:500">🎯 ${purp}</div>`;
+  if(!dt.length){h+=`<div style="color:var(--t3);font-size:13px;text-align:center;padding:16px 0">Немає відряджень</div>`;}
+  else{dt.forEach(t=>{
+    h+=`<div class="t-card" style="border-left-color:${ec(t.employee)}">`;
+    h+=`<div style="font-size:14px;font-weight:600;color:var(--t1)">${t.employee}</div>`;
+    h+=`<div style="font-size:11px;color:var(--t3);margin-top:2px">${er(t.employee)}</div>`;
+    h+=`<div style="font-size:12px;color:var(--t2);margin-top:3px">🇷🇴 Бухарест · ${fm(t.start)}–${fm(t.end)} <span style="margin-left:8px;color:${SC[t.status]||'#6B7280'};font-weight:600">${t.status}</span></div>`;
+    if(t.purpose)h+=`<div style="font-size:11px;color:var(--t2);margin-top:4px">🎯 ${t.purpose}</div>`;
+    h+=`</div>`;});}
+  document.getElementById('dayPop').innerHTML=h;document.getElementById('dayOv').classList.remove('hidden');}
+function closeDay(){document.getElementById('dayOv').classList.add('hidden');}
+function changeYear(d){year+=d;render();}
+
+loadCache();if(!dataLoaded)loadDemoData();render();updateStatus();
+</script>
+</body>
+</html>
