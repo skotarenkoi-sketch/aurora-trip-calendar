@@ -209,7 +209,11 @@ function parseWorkbook(wb){
 
 function pd(v){
   if(!v)return null;
-  if(v instanceof Date){const y=v.getFullYear(),m=String(v.getMonth()+1).padStart(2,'0'),d=String(v.getDate()).padStart(2,'0');return`${y}-${m}-${d}`;}
+  if(v instanceof Date){
+    // FIX: Use UTC methods to avoid timezone shift (-1 day bug)
+    const y=v.getUTCFullYear(),m=String(v.getUTCMonth()+1).padStart(2,'0'),d=String(v.getUTCDate()).padStart(2,'0');
+    return`${y}-${m}-${d}`;
+  }
   const s=String(v).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.substring(0,10);return null;
 }
 
